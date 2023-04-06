@@ -8,5 +8,6 @@ import java.util.Optional;
 import java.util.List;
 
 public interface LikeablePersonRepository extends JpaRepository<LikeablePerson, Integer> {
+    Optional<LikeablePerson> findById(Long id);
     List<LikeablePerson> findByFromInstaMemberId(Long fromInstaMemberId);
 }

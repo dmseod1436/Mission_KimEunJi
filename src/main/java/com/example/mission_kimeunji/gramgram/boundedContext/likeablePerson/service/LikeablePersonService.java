@@ -1,16 +1,17 @@
 package com.example.mission_kimeunji.gramgram.boundedContext.likeablePerson.service;
 
-
+import com.example.mission_kimeunji.gramgram.base.rq.Rq;
 import com.example.mission_kimeunji.gramgram.base.rsData.RsData;
 import com.example.mission_kimeunji.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.example.mission_kimeunji.gramgram.boundedContext.instaMember.service.InstaMemberService;
 import com.example.mission_kimeunji.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.example.mission_kimeunji.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
 import com.example.mission_kimeunji.gramgram.boundedContext.member.entity.Member;
+import com.example.mission_kimeunji.gramgram.boundedContext.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.Optional;
 import java.util.List;
 
 @Service
@@ -19,6 +20,8 @@ import java.util.List;
 public class LikeablePersonService {
     private final LikeablePersonRepository likeablePersonRepository;
     private final InstaMemberService instaMemberService;
+    private final MemberService memberService;
+    private final Rq rq;
 
     @Transactional
     public RsData<LikeablePerson> like(Member member, String username, int attractiveTypeCode) {
@@ -48,5 +51,20 @@ public class LikeablePersonService {
 
     public List<LikeablePerson> findByFromInstaMemberId(Long fromInstaMemberId) {
         return likeablePersonRepository.findByFromInstaMemberId(fromInstaMemberId);
+    }
+    @Transactional
+    public RsData<LikeablePerson> delete(Member member, Long id) {
+        LikeablePerson likeablePerson = likeablePersonRepository.findById(id).get();
+        if (!likeablePerson.getFromInstaMember().equals(member.getInstaMember())) {
+            return RsData.of("F-1", "호감상대 삭제 권한이 없습니다.");
+        }
+        likeablePersonRepository.delete(likeablePerson);
+
+        Optional<LikeablePerson> person = likeablePersonRepository.findById(id);
+        if (person.isEmpty()){
+            return RsData.of("F-2", "해당 호감상대가 존재하지 않습니다.");
+        }
+
+        return RsData.of("S-1", "해당 인스타유저(%s)가 호감상대 리스트에서 삭제되었습니다.".formatted(likeablePerson.getToInstaMember().getUsername()), likeablePerson);
     }
 }
