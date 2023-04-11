@@ -1,6 +1,11 @@
 spring:
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
   profiles:
     active: dev
+    include: secret
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://127.0.0.1:3306/gram__dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
@@ -11,11 +16,10 @@ spring:
       client:
         registration:
           kakao:
-            clientId: 622130385bc3c249f8b2da61aac37908
             scope:
             client-name: Kakao
             authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: '{baseUrl}/{action}/oauth2/code/{registrationId}
             client-authentication-method: POST
         provider:
           kakao:
