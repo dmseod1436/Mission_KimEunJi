@@ -38,6 +38,10 @@ public class LikeablePersonService {
             }
         }
 
+        if(likeablePeople.size() > 10){
+            return RsData.of("F-4", "호감상대는 최대 10명까지 등록할 수 있습니다.");
+        }
+
         InstaMember fromInstaMember = member.getInstaMember();
         InstaMember toInstaMember = instaMemberService.findByUsernameOrCreate(username).getData();
 
