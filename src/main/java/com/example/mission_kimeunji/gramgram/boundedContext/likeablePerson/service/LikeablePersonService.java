@@ -38,7 +38,7 @@ public class LikeablePersonService {
             }
         }
 
-        if(likeablePeople.size() > 10){
+        if(likeablePeople.size() >= 10){
             return RsData.of("F-4", "호감상대는 최대 10명까지 등록할 수 있습니다.");
         }
 
@@ -62,7 +62,7 @@ public class LikeablePersonService {
         // 너를 좋아하는 호감표시 생겼어.
         toInstaMember.addToLikeablePerson(likeablePerson);
 
-        return RsData.of("S-1", "입력하신 인스타유저(%s)를 호감상대로 등록되었습니다.".formatted(username), likeablePerson);
+        return RsData.of("S-1", "입력하신 인스타유저(%s)가 호감상대로 등록되었습니다.".formatted(username), likeablePerson);
     }
 
     public List<LikeablePerson> findByFromInstaMemberId(Long fromInstaMemberId) {

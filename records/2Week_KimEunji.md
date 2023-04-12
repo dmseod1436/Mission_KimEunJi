@@ -16,6 +16,7 @@
 - [x] 네이버 로그인 연동
   - [x] oauth2 클라이언트 사용
   - [ ] 로그인시 id형식에 다른 정보가 포함되지 않을 것
+- [ ] 테스트 케이스 만들기
 
 ### 2주차 미션 요약
 
@@ -26,10 +27,21 @@
 
 **[접근 방법]**
 
-- 
+- [케이스4,6]
+  - LikeablePersonService 클래스에서 호감표시 리스트를 가져왔다.
+  - 리스트상의 usdername과 attractiveTypeCode가 중복되는지 검증한다.
+  - 호감표시를 동일 대상에게 중복사유로 보냈을 경우 '호감상대를 같은사유로 중복등록 할 수 없습니다.'라는 문구 출력 및 등록거절
+
+- [케이스5]
+  - LikeablePersonService 클래스에서 .size를 통해 내가 호감을 표시한 인원을 체크한다.
+  - 호감표시가 10명 초과인지 확인 후 넘어갈 경우 '호감상대는 최대 10명까지 등록할 수 있습니다.' 라는 문구 출력 및 등록거절
+
+- [네이버 로그인]
+  - 네이버 개발자 사이트 https://developers.naver.com/docs/common/openapiguide/apilist.md 에서 authorization, token, user의 uri를 받아왔다.
+  - 사용자의 정보가 kakao, google과 다른 형태로 받아와지는데 'response'의 값만 받아오도록 처리한다.(미완성)
 
 **[특이사항]**
 
-- 
+- 현재 일어나는 오류와 코드 내용의 추가적인 수정이 필요할 것 같다.
 
 **참고: [Refactoring]**
