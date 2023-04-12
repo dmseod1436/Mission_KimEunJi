@@ -30,6 +30,14 @@ public class LikeablePersonService {
             return RsData.of("F-1", "본인을 호감상대로 등록할 수 없습니다.");
         }
 
+        List<LikeablePerson> likeablePeople = member.getInstaMember().getFromLikeablePeople();
+        if(likeablePeople.stream().anyMatch(likeablePerson -> likeablePerson.getToInstaMember().getUsername().equals(username))){
+            Optional<LikeablePerson> likeablePerson = likeablePeople.stream().filter(likeablePerson1 -> likeablePerson1.getToInstaMember().getUsername().equals(username)).findFirst();
+            if(likeablePerson.get().getAttractiveTypeCode() == attractiveTypeCode){
+                return RsData.of("F-3", "호감상대를 같은사유로 중복등록 할 수 없습니다.");
+            }
+        }
+
         InstaMember fromInstaMember = member.getInstaMember();
         InstaMember toInstaMember = instaMemberService.findByUsernameOrCreate(username).getData();
 
