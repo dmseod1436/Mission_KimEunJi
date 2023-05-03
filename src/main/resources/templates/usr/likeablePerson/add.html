@@ -1,94 +1,82 @@
-<html layout:decorate="~{usr/layout/layout.html}">
+<html>
 
 <head>
-  <title>당신이 좋아하는 사람이 누군지 알려주세요.</title>
+
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- 제이쿼리 불러오기 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+  <!-- toastr 불러오기 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+  <link rel="stylesheet" href="https://jhs512.github.io/toastr/toastr.css">
+
+  <!-- 공통 JS 불러오기 -->
+  <script src="/resource/common/common.js"></script>
+  <!-- 공통 CSS 불러오기 -->
+  <link rel="stylesheet" href="/resource/common/common.css">
+
 </head>
 
 <body>
 
-<main layout:fragment="main">
-  <th:block th:unless="${@rq.member.hasConnectedInstaMember}">
-    <div>먼저 본인의 인스타그램 아이디를 입력해주세요.</div>
+<!-- 데이지 UI 불러오기 -->
+<link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet" type="text/css"/>
+<!-- 테일윈드 불러오기 -->
+<script src="https://cdn.tailwindcss.com"></script>
 
-    <div>
-      <a href="/instaMember/connect" class="btn btn-link">본인의 인스타그램 아이디 입력하기</a>
-    </div>
-  </th:block>
+<!-- 공통 상단 -->
+<header>
+  <a href="/" class="btn btn-link">메인</a>
+  <a href="/member/login" th:if="${@rq.logout}" class="btn btn-link">로그인</a>
+  <a href="/member/join" th:if="${@rq.logout}" class="btn btn-link">회원가입</a>
+  <a href="/member/me" th:if="${@rq.login}" class="btn btn-link">내 정보</a>
+  <a href="/instaMember/connect" th:if="${@rq.login}" class="btn btn-link">본인의 인스타그램 정보 입력</a>
+  <a href="/likeablePerson/add" th:if="${@rq.login}" class="btn btn-link">호감표시</a>
+  <a href="/likeablePerson/list" th:if="${@rq.login}" class="btn btn-link">호감목록</a>
+  <a href="javascript:;" th:if="${@rq.login}" onclick="$(this).next().submit();" class="btn btn-link">로그아웃</a>
+  <form th:if="${@rq.login}" hidden th:action="|/member/logout|" method="POST"></form>
+  <span th:if="${@rq.login}" th:text="|${@rq.member.username}님 환영합니다.|"></span>
+  <span th:if="${@rq.login and @rq.member.hasConnectedInstaMember()}"
+        th:text="|(${#lists.size(@rq.member.instaMember.toLikeablePeople)}/${#lists.size(@rq.member.instaMember.fromLikeablePeople)})|"></span>
+</header>
 
-  <th:block th:if="${@rq.member.hasConnectedInstaMember}">
-    <script th:inline="javascript">
-      const myInstaMemberUsername = /*[[ ${@rq.member.instaMember.username} ]]*/ null;
+<main layout:fragment="main"></main>
 
-      function AddForm__submit(form) {
-        // username 이(가) 올바른지 체크
+<script th:inline="javascript">
+  // 타임리프 문법(파라미터, ? 뒤에 입력된 매개변수들)
+  const params = /*[[ ${param} ]]*/ null;
 
-        form.username.value = form.username.value.trim(); // 입력란의 입력값에 있을지 모르는 좌우공백제거
+  if (params.msg) {
+    toastNotice(params.msg[0]);
+  }
 
-        if (form.username.value.length === 0) {
-          toastWarning('상대방의 인스타그램 아이디를 입력해주세요.');
-          form.username.focus();
-          return;
-        }
+  if (params.errorMsg) {
+    toastWarning(params.errorMsg[0]);
+  }
 
-        if (form.username.value.length < 4) {
-          toastWarning('상대방의 인스타그램 아이디를 4자 이상 입력해주세요.');
-          form.username.focus();
-          return;
-        }
+  // history.back 에 의해서 돌아온 경우에 실행됨
+  // 평소에도 실행됨
+  $(window).bind("pageshow", function (event) {
+    const localStorageKeyAboutHistoryBackErrorMsg = "historyBackErrorMsg___" + location.href;
 
-        if (form.username.value === myInstaMemberUsername) {
-          toastWarning('본인을 호감상대로 등록할 수 없습니다.');
-          form.username.focus();
-          return;
-        }
+    if (localStorage.getItem(localStorageKeyAboutHistoryBackErrorMsg)) {
+      toastWarning(localStorage.getItem(localStorageKeyAboutHistoryBackErrorMsg));
+      localStorage.removeItem(localStorageKeyAboutHistoryBackErrorMsg);
+    } else if (!document.referrer) {
+      const localStorageKeyAboutHistoryBackErrorMsg = "historyBackErrorMsg___null";
 
-        const $checkedAttractiveTypeCodeRadioButton = $(form).find("[name=attractiveTypeCode]:checked");
-
-        if ($checkedAttractiveTypeCodeRadioButton.length === 0) {
-          toastWarning('상대방의 매력포인트를 선택해주세요.');
-          $(form).find("[name=attractiveTypeCode]:first").focus();
-          return;
-        }
-
-        form.submit(); // 폼 발송
+      if (localStorage.getItem(localStorageKeyAboutHistoryBackErrorMsg)) {
+        toastWarning(localStorage.getItem(localStorageKeyAboutHistoryBackErrorMsg));
+        localStorage.removeItem(localStorageKeyAboutHistoryBackErrorMsg);
       }
-    </script>
+    }
+  });
+</script>
 
-    <form th:action method="POST" class="p-10 max-w-sm flex flex-col gap-4"
-          onsubmit="AddForm__submit(this); return false;">
-      <div>
-        당신의 인스타ID : <span class="badge" th:text="${@rq.member.instaMember.username}"></span>
-      </div>
-      <div>
-        <input type="text" name="username" autocomplete="off" maxlength="30" placeholder="상대방의 인스타그램 아이디"
-               class="input input-bordered">
-      </div>
-      <div>
-        <div class="form-control">
-          <label class="label cursor-pointer">
-            <span class="label-text">외모</span>
-            <input type="radio" name="attractiveTypeCode" value="1" class="radio focus:bg-red-100">
-          </label>
-        </div>
-        <div class="form-control">
-          <label class="label cursor-pointer">
-            <span class="label-text">성격</span>
-            <input type="radio" name="attractiveTypeCode" value="2" class="radio focus:bg-red-100">
-          </label>
-        </div>
-        <div class="form-control">
-          <label class="label cursor-pointer">
-            <span class="label-text">능력</span>
-            <input type="radio" name="attractiveTypeCode" value="3" class="radio focus:bg-red-100">
-          </label>
-        </div>
-      </div>
-      <div>
-        <input type="submit" value="추가" class="btn btn-primary">
-      </div>
-    </form>
-  </th:block>
-</main>
 </body>
 
 </html>
