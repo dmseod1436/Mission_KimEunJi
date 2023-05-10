@@ -122,7 +122,7 @@ public class LikeablePersonController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/toList")
-    public String showToList(Model model, @RequestParam(value = "gender", required = true) String gender, @RequestParam(value = "attractiveTypeCode", required = true) String attractiveTypeCode, @RequestParam(value = "sortCode", required = true) String sortCode) {
+    public String showToList(Model model, @RequestParam(defaultValue = "") String gender, @RequestParam(defaultValue = "0") String attractiveTypeCode, @RequestParam(defaultValue = "1") String sortCode) {
         InstaMember instaMember = rq.getMember().getInstaMember();
 
         // 인스타인증을 했는지 체크
@@ -130,9 +130,6 @@ public class LikeablePersonController {
             // 해당 인스타회원이 좋아하는 사람들 목록
             List<LikeablePerson> likeablePeople = likeablePersonService.listingContents(instaMember, gender, attractiveTypeCode, sortCode);
             model.addAttribute("likeablePeople", likeablePeople);
-        }
-        if (gender == null || attractiveTypeCode == null || sortCode == null) {
-            throw new IllegalArgumentException("항목이 존재하지 않습니다.");
         }
 
 

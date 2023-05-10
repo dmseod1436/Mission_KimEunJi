@@ -224,12 +224,14 @@ public class LikeablePersonService {
     public List<LikeablePerson> listingContents(InstaMember instaMember, String gender, String attractiveTypeCode, String sortCode) {
         List<LikeablePerson> likeablePeople = instaMember.getToLikeablePeople();
 
-        if(gender.isBlank() && attractiveTypeCode.isBlank()){
-            return likeablePeople;
-        }
-        else {likeablePeople = likeablePeople.stream()
+        if(!gender.equals("")){likeablePeople = likeablePeople.stream()
                 .filter(p -> p.getFromInstaMember().getGender().equals(gender))
                 .collect(Collectors.toList());
+        }
+        if(!attractiveTypeCode.equals("")){
+            likeablePeople = likeablePeople.stream()
+                    .filter(p -> p.getAttractiveTypeCode() == Integer.parseInt(attractiveTypeCode))
+                    .collect(Collectors.toList());
         }
 
         return likeablePeople;
