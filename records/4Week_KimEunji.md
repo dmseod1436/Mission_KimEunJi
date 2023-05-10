@@ -1,7 +1,13 @@
 ## Title: [4Week] 김은지
 
 ### 미션 요구사항 분석 & 체크리스트
-- [ ] 
+- [x] 네이버클라우드플랫폼을 통한 배포, 도메인, HTTPS 까지 적용
+- [x] 내가 받은 호감리스트에서 성별 필터링 구현
+  - [x] @RequestParam를 통해 파라미터 값을 받을 수 있도록 함
+  - [x] gender 값을 steam을 통해 필터링하여 반환함
+- [x] 내가 받은 호감 리스트에서 호감사유 필터링 구현
+  - [x] @RequestParam를 통해 파라미터 값을 받을 수 있도록 함
+  - [x] attractiveTypeCode 값을 steam을 통해 필터링하여 반환함
 
 ---
 
@@ -20,7 +26,9 @@
 
 **[접근 방법]**
 
-- 
+- LikeablePersonController 클래스에서 @RequestParam을 통해 필터링을 위한 값을 받을 수 있도록 showToList()에 추가함
+- 값이 없을 경우 gender = "", attractiveTypeCode = "0", sortCode = "1" 로 초기화함
+- LikeableService에 listingContents를 생성하여 호감 목록을 필터링하고, 필터링한 목록이 반환됨
 
 **[특이사항]**
 
